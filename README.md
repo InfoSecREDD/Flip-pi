@@ -33,6 +33,12 @@ You can also send binary packets to UART. A simplified keyboard is used to enter
 ![004](https://raw.githubusercontent.com/InfoSecREDD/Flip-pi/main/img/4.png)
 
 ## How to install
+[Momemntum Firmware](https://github.com/Next-Flip/Momentum-Firmware)
+
+or
+
+[Unleashed Firmware](https://github.com/DarkFlippers/unleashed-firmware)
+
 Copy the contents of the repository to the applications_user/Pi_Terminal folder Flipper Zero firmware and build app with the command ./fbt fap_Pi_Terminal.
 
 Or use the tool [uFBT](https://github.com/flipperdevices/flipperzero-ufbt) for building applications for Flipper Zero.
