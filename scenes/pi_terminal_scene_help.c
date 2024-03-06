@@ -14,7 +14,7 @@ void Pi_Terminal_scene_help_on_enter(void* context) {
     temp_str = furi_string_alloc();
     furi_string_printf(
         temp_str,
-        "\nPi Terminal for Flipper\nBy dag and Redd\n\nThis app is modified\nWiFi Marauder and\n UART Terminal,\nThanks to 0xchocolate,\n cool4uma, rnadyrshin and\n xMasterX for everything!\n\n");
+        "\nPi Terminal for Flipper\nBy dag and Redd\n\nThis app is modified\nWiFi Marauder and\n UART Terminal.\n\nThanks to 0xchocolate,\n cool4uma, rnadyrshin,\n xMasterX and WillyJL\n for everything!\n\n");
     furi_string_cat_printf(temp_str, "Press BACK to return\n");
 
     widget_add_text_box_element(

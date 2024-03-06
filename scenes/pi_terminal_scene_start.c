@@ -6,10 +6,9 @@ typedef enum {
     OPEN_SETUP,
     OPEN_PORT,
     SEND_CMD,
-    SEND_AT_CMD,
     SEND_FAST_CMD,
     SEND_WIFITE,
-    SEND_CTRL_C,
+    SEND_CTRL,
     OPEN_HELP
 } ActionType;
 // Command availability in different modes
@@ -25,18 +24,15 @@ typedef struct {
     ModeMask mode_mask;
 } Pi_TerminalItem;
 
-static const char at_str[] = "AT";
-
 // NUM_MENU_ITEMS defined in Pi_Terminal_app_i.h - if you add an entry here, increment it!
 static const Pi_TerminalItem items[START_MENU_ITEMS] = {
     {"Setup", {""}, 1, OPEN_SETUP, BOTH_MODES},
     {"Open port", {""}, 1, OPEN_PORT, BOTH_MODES},
     {"Send packet", {""}, 1, SEND_CMD, HEX_MODE},
     {"Send command", {""}, 1, SEND_CMD, TEXT_MODE},
-    {"Send AT command", {""}, 1, SEND_AT_CMD, TEXT_MODE},
     {"Fast cmd",
-     {"kali", "sudo help", "sudo uptime", "sudo reboot", "sudo poweroff"},
-     5,
+     {"kali", "sudo help", "sudo uptime", "sudo reboot", "sudo poweroff", "./log_script.sh"},
+     6,
      SEND_FAST_CMD,
      TEXT_MODE},
     {"Wifite",
@@ -44,7 +40,11 @@ static const Pi_TerminalItem items[START_MENU_ITEMS] = {
       1,
       SEND_WIFITE,
       TEXT_MODE},
-    {"Send Ctrl+C", {""}, 1, SEND_CTRL_C, BOTH_MODES},
+    {"Send Ctrl+",
+     {"C (Interrupt)", "Z (Suspend)", "L (Clear Screen)", "P (Previous Cmd)", "N (Next Cmd)"},
+     5,
+     SEND_CTRL,
+     BOTH_MODES},
     {"Help", {""}, 1, OPEN_HELP, BOTH_MODES},
 };
 
@@ -71,15 +71,10 @@ static void Pi_Terminal_scene_start_var_list_enter_callback(void* context, uint3
     case OPEN_SETUP:
         view_dispatcher_send_custom_event(app->view_dispatcher, Pi_TerminalEventSetup);
         return;
-    case SEND_AT_CMD:
     case SEND_CMD:
     case SEND_WIFITE:
     case SEND_FAST_CMD:
         app->is_command = true;
-
-        if(item->action == SEND_AT_CMD) {
-            app->selected_tx_string = at_str;
-        }
 
         if(app->hex_mode) {
             view_dispatcher_send_custom_event(
@@ -92,8 +87,24 @@ static void Pi_Terminal_scene_start_var_list_enter_callback(void* context, uint3
     case OPEN_PORT:
         view_dispatcher_send_custom_event(app->view_dispatcher, Pi_TerminalEventStartConsole);
         return;
-    case SEND_CTRL_C:
-        Pi_Terminal_uart_send_ctrl_c(app->uart);
+    case SEND_CTRL:
+        switch(app->selected_option_index[app->selected_menu_index]) {
+            case 0: // Ctrl+C
+                Pi_Terminal_uart_send_ctrl_sequence(app->uart, 0x03);
+                break;
+            case 1: // Ctrl+Z
+                Pi_Terminal_uart_send_ctrl_sequence(app->uart, 0x1A);
+                break;
+            case 2: // Ctrl+L
+                Pi_Terminal_uart_send_ctrl_sequence(app->uart, 0x0C);
+                break;
+            case 3: // Ctrl+P
+                Pi_Terminal_uart_send_ctrl_sequence(app->uart, 0x10);
+                break;
+            case 4: // Ctrl+N
+                Pi_Terminal_uart_send_ctrl_sequence(app->uart, 0x0E);
+                break;
+        }
         break;
     case OPEN_HELP:
         view_dispatcher_send_custom_event(app->view_dispatcher, Pi_TerminalEventStartHelp);
