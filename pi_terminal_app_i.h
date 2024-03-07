@@ -20,7 +20,7 @@
 #define pi_terminal_TEXT_BOX_STORE_SIZE (4096)
 #define pi_terminal_TEXT_INPUT_STORE_SIZE (512)
 
-struct pi_terminalapp {
+struct pi_terminalApp {
     Gui* gui;
     ViewDispatcher* view_dispatcher;
     SceneManager* scene_manager;
@@ -53,10 +53,10 @@ struct pi_terminalapp {
 };
 
 typedef enum {
-    pi_terminalappViewVarItemList,
-    pi_terminalappViewSetup,
-    pi_terminalappViewConsoleOutput,
-    pi_terminalappViewTextInput,
-    pi_terminalappViewHexInput,
-    pi_terminalappViewHelp,
-} pi_terminalappView;
+    pi_terminalAppViewVarItemList,
+    pi_terminalAppViewSetup,
+    pi_terminalAppViewConsoleOutput,
+    pi_terminalAppViewTextInput,
+    pi_terminalAppViewHexInput,
+    pi_terminalAppViewHelp,
+} pi_terminalAppView;

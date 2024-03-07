@@ -20,7 +20,7 @@ static const pi_terminal_Setup_Item items[SETUP_MENU_ITEMS] = {
 
 static void pi_terminal_scene_setup_var_list_enter_callback(void* context, uint32_t index) {
     furi_assert(context);
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
 
     furi_assert(index < SETUP_MENU_ITEMS);
     const pi_terminal_Setup_Item* item = &items[index];
@@ -33,7 +33,7 @@ static void pi_terminal_scene_setup_var_list_enter_callback(void* context, uint3
 static void pi_terminal_scene_setup_var_list_change_callback(VariableItem* item) {
     furi_assert(item);
 
-    pi_terminalapp* app = variable_item_get_context(item);
+    pi_terminalApp* app = variable_item_get_context(item);
     furi_assert(app);
 
     const pi_terminal_Setup_Item* menu_item = &items[app->setup_selected_menu_index];
@@ -67,7 +67,7 @@ static void pi_terminal_scene_setup_var_list_change_callback(VariableItem* item)
 }
 
 void pi_terminal_scene_setup_on_enter(void* context) {
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     VariableItemList* var_item_list = app->setup_var_item_list;
 
     variable_item_list_set_enter_callback(
@@ -89,12 +89,12 @@ void pi_terminal_scene_setup_on_enter(void* context) {
     variable_item_list_set_selected_item(
         var_item_list, scene_manager_get_scene_state(app->scene_manager, pi_terminalSceneSetup));
 
-    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalappViewSetup);
+    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalAppViewSetup);
 }
 
 bool pi_terminal_scene_setup_on_event(void* context, SceneManagerEvent event) {
     UNUSED(context);
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     bool consumed = false;
 
     if(event.type == SceneManagerEventTypeCustom) {
@@ -109,6 +109,6 @@ bool pi_terminal_scene_setup_on_event(void* context, SceneManagerEvent event) {
 }
 
 void pi_terminal_scene_setup_on_exit(void* context) {
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     variable_item_list_reset(app->setup_var_item_list);
 }

@@ -2,7 +2,7 @@
 #include "pi_terminal_uart.h"
 
 struct pi_terminalUart {
-    pi_terminalapp* app;
+    pi_terminalApp* app;
     FuriThread* rx_thread;
     FuriStreamBuffer* rx_stream;
     uint8_t rx_buf[RX_BUF_SIZE + 1];
@@ -62,7 +62,7 @@ void pi_terminal_uart_tx(pi_terminalUart* uart, uint8_t* data, size_t len) {
     furi_hal_serial_tx(uart->serial_handle, data, len);
 }
 
-pi_terminalUart* pi_terminal_uart_init(pi_terminalapp* app) {
+pi_terminalUart* pi_terminal_uart_init(pi_terminalApp* app) {
     pi_terminalUart* uart = malloc(sizeof(pi_terminalUart));
     uart->app = app;
     // Init all rx stream and thread early to avoid crashes

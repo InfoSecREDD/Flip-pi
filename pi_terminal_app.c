@@ -6,24 +6,24 @@
 
 static bool pi_terminal_app_custom_event_callback(void* context, uint32_t event) {
     furi_assert(context);
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     return scene_manager_handle_custom_event(app->scene_manager, event);
 }
 
 static bool pi_terminal_app_back_event_callback(void* context) {
     furi_assert(context);
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     return scene_manager_handle_back_event(app->scene_manager);
 }
 
 static void pi_terminal_app_tick_event_callback(void* context) {
     furi_assert(context);
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     scene_manager_handle_tick_event(app->scene_manager);
 }
 
-pi_terminalapp* pi_terminal_app_alloc() {
-    pi_terminalapp* app = malloc(sizeof(pi_terminalapp));
+pi_terminalApp* pi_terminal_app_alloc() {
+    pi_terminalApp* app = malloc(sizeof(pi_terminalApp));
 
     app->gui = furi_record_open(RECORD_GUI);
 
@@ -44,7 +44,7 @@ pi_terminalapp* pi_terminal_app_alloc() {
     app->var_item_list = variable_item_list_alloc();
     view_dispatcher_add_view(
         app->view_dispatcher,
-        pi_terminalappViewVarItemList,
+        pi_terminalAppViewVarItemList,
         variable_item_list_get_view(app->var_item_list));
 
     for(int i = 0; i < START_MENU_ITEMS; ++i) {
@@ -54,7 +54,7 @@ pi_terminalapp* pi_terminal_app_alloc() {
     app->setup_var_item_list = variable_item_list_alloc();
     view_dispatcher_add_view(
         app->view_dispatcher,
-        pi_terminalappViewSetup,
+        pi_terminalAppViewSetup,
         variable_item_list_get_view(app->setup_var_item_list));
 
     for(int i = 0; i < SETUP_MENU_ITEMS; ++i) {
@@ -63,24 +63,24 @@ pi_terminalapp* pi_terminal_app_alloc() {
 
     app->widget = widget_alloc();
     view_dispatcher_add_view(
-        app->view_dispatcher, pi_terminalappViewHelp, widget_get_view(app->widget));
+        app->view_dispatcher, pi_terminalAppViewHelp, widget_get_view(app->widget));
 
     app->text_box = text_box_alloc();
     view_dispatcher_add_view(
-        app->view_dispatcher, pi_terminalappViewConsoleOutput, text_box_get_view(app->text_box));
+        app->view_dispatcher, pi_terminalAppViewConsoleOutput, text_box_get_view(app->text_box));
     app->text_box_store = furi_string_alloc();
     furi_string_reserve(app->text_box_store, pi_terminal_TEXT_BOX_STORE_SIZE);
 
     app->text_input = uart_text_input_alloc();
     view_dispatcher_add_view(
         app->view_dispatcher,
-        pi_terminalappViewTextInput,
+        pi_terminalAppViewTextInput,
         uart_text_input_get_view(app->text_input));
 
     app->hex_input = uart_hex_input_alloc();
     view_dispatcher_add_view(
         app->view_dispatcher,
-        pi_terminalappViewHexInput,
+        pi_terminalAppViewHexInput,
         uart_text_input_get_view(app->hex_input));
 
     app->setup_selected_option_index[BAUDRATE_ITEM_IDX] = DEFAULT_BAUDRATE_OPT_IDX;
@@ -90,15 +90,15 @@ pi_terminalapp* pi_terminal_app_alloc() {
     return app;
 }
 
-void pi_terminal_app_free(pi_terminalapp* app) {
+void pi_terminal_app_free(pi_terminalApp* app) {
     furi_assert(app);
 
     // Views
-    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalappViewVarItemList);
-    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalappViewSetup);
-    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalappViewConsoleOutput);
-    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalappViewTextInput);
-    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalappViewHexInput);
+    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalAppViewVarItemList);
+    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalAppViewSetup);
+    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalAppViewConsoleOutput);
+    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalAppViewTextInput);
+    view_dispatcher_remove_view(app->view_dispatcher, pi_terminalAppViewHexInput);
 
     text_box_free(app->text_box);
     furi_string_free(app->text_box_store);
@@ -122,7 +122,7 @@ int32_t pi_terminal_app(void* p) {
     Expansion* expansion = furi_record_open(RECORD_EXPANSION);
     expansion_disable(expansion);
 
-    pi_terminalapp* pi_terminal_app = pi_terminal_app_alloc();
+    pi_terminalApp* pi_terminal_app = pi_terminal_app_alloc();
 
     pi_terminal_app->uart = pi_terminal_uart_init(pi_terminal_app);
 

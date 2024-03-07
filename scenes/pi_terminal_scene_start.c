@@ -59,7 +59,7 @@ static uint8_t item_indexes[START_MENU_ITEMS] = {0};
 
 static void pi_terminal_scene_start_var_list_enter_callback(void* context, uint32_t index) {
     furi_assert(context);
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
 
     furi_assert(index < menu_items_num);
     uint8_t item_index = item_indexes[index];
@@ -79,6 +79,7 @@ static void pi_terminal_scene_start_var_list_enter_callback(void* context, uint3
         return;
     case SEND_CMD:
     case SEND_WIFITE:
+    case TESTING:
     case SEND_FAST_CMD:
         app->is_command = true;
 
@@ -111,10 +112,7 @@ static void pi_terminal_scene_start_var_list_enter_callback(void* context, uint3
                 pi_terminal_uart_send_ctrl_sequence(app->uart, 0x0E);
                 break;
         }
-        break;
-    case TESTING:             
-        view_dispatcher_send_custom_event(app->view_dispatcher, pi_terminalEventStartKeyboardText);
-        return;
+        break;          
     case OPEN_HELP:
         view_dispatcher_send_custom_event(app->view_dispatcher, pi_terminalEventStartHelp);
         return;
@@ -126,7 +124,7 @@ static void pi_terminal_scene_start_var_list_enter_callback(void* context, uint3
 static void pi_terminal_scene_start_var_list_change_callback(VariableItem* item) {
     furi_assert(item);
 
-    pi_terminalapp* app = variable_item_get_context(item);
+    pi_terminalApp* app = variable_item_get_context(item);
     furi_assert(app);
 
     uint8_t item_index = item_indexes[app->selected_menu_index];
@@ -138,7 +136,7 @@ static void pi_terminal_scene_start_var_list_change_callback(VariableItem* item)
 }
 
 void pi_terminal_scene_start_on_enter(void* context) {
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     VariableItemList* var_item_list = app->var_item_list;
 
     for(int i = 0; i < START_MENU_ITEMS; ++i) {
@@ -178,35 +176,35 @@ void pi_terminal_scene_start_on_enter(void* context) {
     variable_item_list_set_selected_item(
         var_item_list, scene_manager_get_scene_state(app->scene_manager, pi_terminalSceneStart));
 
-    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalappViewVarItemList);
+    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalAppViewVarItemList);
 }
 
 bool pi_terminal_scene_start_on_event(void* context, SceneManagerEvent event) {
     UNUSED(context);
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     bool consumed = false;
 
     if(event.type == SceneManagerEventTypeCustom) {
         if(event.event == pi_terminalEventSetup) {
             scene_manager_set_scene_state(
                 app->scene_manager, pi_terminalSceneStart, app->selected_menu_index);
-            scene_manager_next_scene(app->scene_manager, pi_terminalappViewSetup);
+            scene_manager_next_scene(app->scene_manager, pi_terminalAppViewSetup);
         } else if(event.event == pi_terminalEventStartKeyboardText) {
             scene_manager_set_scene_state(
                 app->scene_manager, pi_terminalSceneStart, app->selected_menu_index);
-            scene_manager_next_scene(app->scene_manager, pi_terminalappViewTextInput);
+            scene_manager_next_scene(app->scene_manager, pi_terminalAppViewTextInput);
         } else if(event.event == pi_terminalEventStartKeyboardHex) {
             scene_manager_set_scene_state(
                 app->scene_manager, pi_terminalSceneStart, app->selected_menu_index);
-            scene_manager_next_scene(app->scene_manager, pi_terminalappViewHexInput);
+            scene_manager_next_scene(app->scene_manager, pi_terminalAppViewHexInput);
         } else if(event.event == pi_terminalEventStartConsole) {
             scene_manager_set_scene_state(
                 app->scene_manager, pi_terminalSceneStart, app->selected_menu_index);
-            scene_manager_next_scene(app->scene_manager, pi_terminalappViewConsoleOutput);
+            scene_manager_next_scene(app->scene_manager, pi_terminalAppViewConsoleOutput);
         } else if(event.event == pi_terminalEventStartHelp) {
             scene_manager_set_scene_state(
                 app->scene_manager, pi_terminalSceneStart, app->selected_menu_index);
-            scene_manager_next_scene(app->scene_manager, pi_terminalappViewHelp);
+            scene_manager_next_scene(app->scene_manager, pi_terminalAppViewHelp);
         }
         consumed = true;
     } else if(event.type == SceneManagerEventTypeTick) {
@@ -218,6 +216,6 @@ bool pi_terminal_scene_start_on_event(void* context, SceneManagerEvent event) {
 }
 
 void pi_terminal_scene_start_on_exit(void* context) {
-    pi_terminalapp* app = context;
+    pi_terminalApp* app = context;
     variable_item_list_reset(app->var_item_list);
 }
