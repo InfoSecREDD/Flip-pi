@@ -1,14 +1,14 @@
 #include "../pi_terminal_app_i.h"
 
 void pi_terminal_scene_help_widget_callback(GuiButtonType result, InputType type, void* context) {
-    pi_terminalApp* app = context;
+    pi_terminalapp* app = context;
     if(type == InputTypeShort) {
         view_dispatcher_send_custom_event(app->view_dispatcher, result);
     }
 }
 
 void pi_terminal_scene_help_on_enter(void* context) {
-    pi_terminalApp* app = context;
+    pi_terminalapp* app = context;
 
     FuriString* temp_str;
     temp_str = furi_string_alloc();
@@ -40,11 +40,11 @@ void pi_terminal_scene_help_on_enter(void* context) {
     widget_add_text_scroll_element(app->widget, 0, 16, 128, 50, furi_string_get_cstr(temp_str));
     furi_string_free(temp_str);
 
-    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalAppViewHelp);
+    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalappViewHelp);
 }
 
 bool pi_terminal_scene_help_on_event(void* context, SceneManagerEvent event) {
-    pi_terminalApp* app = context;
+    pi_terminalapp* app = context;
     bool consumed = false;
     UNUSED(app);
     UNUSED(event);
@@ -52,7 +52,7 @@ bool pi_terminal_scene_help_on_event(void* context, SceneManagerEvent event) {
 }
 
 void pi_terminal_scene_help_on_exit(void* context) {
-    pi_terminalApp* app = context;
+    pi_terminalapp* app = context;
     // Clear views
     widget_reset(app->widget);
 }

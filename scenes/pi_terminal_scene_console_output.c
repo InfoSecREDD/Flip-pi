@@ -2,7 +2,7 @@
 
 void pi_terminal_console_output_handle_rx_data_cb(uint8_t* buf, size_t len, void* context) {
     furi_assert(context);
-    pi_terminalApp* app = context;
+    pi_terminalapp* app = context;
     FuriString* new_str = furi_string_alloc();
 
     if(app->hex_mode) {
@@ -45,7 +45,7 @@ static uint8_t hex_char_to_byte(const char c) {
 }
 
 void pi_terminal_scene_console_output_on_enter(void* context) {
-    pi_terminalApp* app = context;
+    pi_terminalapp* app = context;
 
     TextBox* text_box = app->text_box;
     text_box_reset(app->text_box);
@@ -80,7 +80,7 @@ void pi_terminal_scene_console_output_on_enter(void* context) {
     text_box_set_text(app->text_box, furi_string_get_cstr(app->text_box_store));
 
     scene_manager_set_scene_state(app->scene_manager, pi_terminalSceneConsoleOutput, 0);
-    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalAppViewConsoleOutput);
+    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalappViewConsoleOutput);
 
     // Register callback to receive data
     pi_terminal_uart_set_handle_rx_data_cb(
@@ -128,7 +128,7 @@ void pi_terminal_scene_console_output_on_enter(void* context) {
 }
 
 bool pi_terminal_scene_console_output_on_event(void* context, SceneManagerEvent event) {
-    pi_terminalApp* app = context;
+    pi_terminalapp* app = context;
 
     bool consumed = false;
 
@@ -143,7 +143,7 @@ bool pi_terminal_scene_console_output_on_event(void* context, SceneManagerEvent 
 }
 
 void pi_terminal_scene_console_output_on_exit(void* context) {
-    pi_terminalApp* app = context;
+    pi_terminalapp* app = context;
 
     // Unregister rx callback
     pi_terminal_uart_set_handle_rx_data_cb(app->uart, NULL);

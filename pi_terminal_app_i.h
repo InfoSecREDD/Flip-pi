@@ -14,13 +14,13 @@
 #include "pi_text_input.h"
 #include "pi_hex_input.h"
 
-#define START_MENU_ITEMS (8)
+#define START_MENU_ITEMS (9)
 #define SETUP_MENU_ITEMS (3)
 
 #define pi_terminal_TEXT_BOX_STORE_SIZE (4096)
 #define pi_terminal_TEXT_INPUT_STORE_SIZE (512)
 
-struct pi_terminalApp {
+struct pi_terminalapp {
     Gui* gui;
     ViewDispatcher* view_dispatcher;
     SceneManager* scene_manager;
@@ -53,10 +53,10 @@ struct pi_terminalApp {
 };
 
 typedef enum {
-    pi_terminalAppViewVarItemList,
-    pi_terminalAppViewSetup,
-    pi_terminalAppViewConsoleOutput,
-    pi_terminalAppViewTextInput,
-    pi_terminalAppViewHexInput,
-    pi_terminalAppViewHelp,
-} pi_terminalAppView;
+    pi_terminalappViewVarItemList,
+    pi_terminalappViewSetup,
+    pi_terminalappViewConsoleOutput,
+    pi_terminalappViewTextInput,
+    pi_terminalappViewHexInput,
+    pi_terminalappViewHelp,
+} pi_terminalappView;
