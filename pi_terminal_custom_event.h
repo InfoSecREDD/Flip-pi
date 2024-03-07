@@ -1,10 +1,10 @@
 #pragma once
 
 typedef enum {
-    Pi_TerminalEventRefreshConsoleOutput = 0,
-    Pi_TerminalEventSetup,
-    Pi_TerminalEventStartConsole,
-    Pi_TerminalEventStartKeyboardText,
-    Pi_TerminalEventStartKeyboardHex,
-    Pi_TerminalEventStartHelp,
-} Pi_TerminalCustomEvent;
+    pi_terminalEventRefreshConsoleOutput = 0,
+    pi_terminalEventSetup,
+    pi_terminalEventStartConsole,
+    pi_terminalEventStartKeyboardText,
+    pi_terminalEventStartKeyboardHex,
+    pi_terminalEventStartHelp,
+} pi_terminalCustomEvent;

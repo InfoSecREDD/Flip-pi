@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Pi_Terminal_app.h"
-#include "scenes/Pi_Terminal_scene.h"
-#include "Pi_Terminal_custom_event.h"
-#include "Pi_Terminal_uart.h"
+#include "pi_terminal_app.h"
+#include "scenes/pi_terminal_scene.h"
+#include "pi_terminal_custom_event.h"
+#include "pi_terminal_uart.h"
 
 #include <gui/gui.h>
 #include <gui/view_dispatcher.h>
@@ -17,15 +17,15 @@
 #define START_MENU_ITEMS (8)
 #define SETUP_MENU_ITEMS (3)
 
-#define Pi_Terminal_TEXT_BOX_STORE_SIZE (4096)
-#define Pi_Terminal_TEXT_INPUT_STORE_SIZE (512)
+#define pi_terminal_TEXT_BOX_STORE_SIZE (4096)
+#define pi_terminal_TEXT_INPUT_STORE_SIZE (512)
 
-struct Pi_TerminalApp {
+struct pi_terminalApp {
     Gui* gui;
     ViewDispatcher* view_dispatcher;
     SceneManager* scene_manager;
 
-    char text_input_store[Pi_Terminal_TEXT_INPUT_STORE_SIZE + 1];
+    char text_input_store[pi_terminal_TEXT_INPUT_STORE_SIZE + 1];
     FuriString* text_box_store;
     size_t text_box_store_strlen;
     TextBox* text_box;
@@ -34,7 +34,7 @@ struct Pi_TerminalApp {
     Widget* widget;
     VariableItemList* var_item_list;
     VariableItemList* setup_var_item_list;
-    Pi_TerminalUart* uart;
+    pi_terminalUart* uart;
 
     int setup_selected_menu_index;
     int setup_selected_option_index[SETUP_MENU_ITEMS];
@@ -53,10 +53,10 @@ struct Pi_TerminalApp {
 };
 
 typedef enum {
-    Pi_TerminalAppViewVarItemList,
-    Pi_TerminalAppViewSetup,
-    Pi_TerminalAppViewConsoleOutput,
-    Pi_TerminalAppViewTextInput,
-    Pi_TerminalAppViewHexInput,
-    Pi_TerminalAppViewHelp,
-} Pi_TerminalAppView;
+    pi_terminalAppViewVarItemList,
+    pi_terminalAppViewSetup,
+    pi_terminalAppViewConsoleOutput,
+    pi_terminalAppViewTextInput,
+    pi_terminalAppViewHexInput,
+    pi_terminalAppViewHelp,
+} pi_terminalAppView;

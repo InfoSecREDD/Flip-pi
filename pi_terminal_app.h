@@ -4,7 +4,7 @@
 extern "C" {
 #endif
 
-typedef struct Pi_TerminalApp Pi_TerminalApp;
+typedef struct pi_terminalApp pi_terminalApp;
 
 #ifdef __cplusplus
 }

@@ -1,19 +1,19 @@
-#include "../Pi_Terminal_app_i.h"
+#include "../pi_terminal_app_i.h"
 
-void Pi_Terminal_scene_text_input_callback(void* context) {
-    Pi_TerminalApp* app = context;
+void pi_terminal_scene_text_input_callback(void* context) {
+    pi_terminalapp* app = context;
 
-    view_dispatcher_send_custom_event(app->view_dispatcher, Pi_TerminalEventStartConsole);
+    view_dispatcher_send_custom_event(app->view_dispatcher, pi_terminalEventStartConsole);
 }
 
-void Pi_Terminal_scene_text_input_on_enter(void* context) {
-    Pi_TerminalApp* app = context;
+void pi_terminal_scene_text_input_on_enter(void* context) {
+    pi_terminalapp* app = context;
 
     if(false == app->is_custom_tx_string) {
         // Fill text input with selected string so that user can add to it
         size_t length = strlen(app->selected_tx_string);
-        furi_assert(length < Pi_Terminal_TEXT_INPUT_STORE_SIZE);
-        bzero(app->text_input_store, Pi_Terminal_TEXT_INPUT_STORE_SIZE);
+        furi_assert(length < pi_terminal_TEXT_INPUT_STORE_SIZE);
+        bzero(app->text_input_store, pi_terminal_TEXT_INPUT_STORE_SIZE);
         strncpy(app->text_input_store, app->selected_tx_string, length);
 
         // Add space - because flipper keyboard currently doesn't have a space
@@ -25,33 +25,29 @@ void Pi_Terminal_scene_text_input_on_enter(void* context) {
     // Setup view
     UART_TextInput* text_input = app->text_input;
     // Add help message to header
-    if(0 == strncmp("AT", app->selected_tx_string, strlen("AT"))) {
-        app->TERMINAL_MODE = 1;
-        uart_text_input_set_header_text(text_input, "Send AT command to UART");
-    } else {
-        app->TERMINAL_MODE = 0;
-        uart_text_input_set_header_text(text_input, "Send command to UART");
-    }
+    app->TERMINAL_MODE = 0;
+    uart_text_input_set_header_text(text_input, "Send command to Pi");
+
     uart_text_input_set_result_callback(
         text_input,
-        Pi_Terminal_scene_text_input_callback,
+        pi_terminal_scene_text_input_callback,
         app,
         app->text_input_store,
-        Pi_Terminal_TEXT_INPUT_STORE_SIZE,
+        pi_terminal_TEXT_INPUT_STORE_SIZE,
         false);
 
-    view_dispatcher_switch_to_view(app->view_dispatcher, Pi_TerminalAppViewTextInput);
+    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalappViewTextInput);
 }
 
-bool Pi_Terminal_scene_text_input_on_event(void* context, SceneManagerEvent event) {
-    Pi_TerminalApp* app = context;
+bool pi_terminal_scene_text_input_on_event(void* context, SceneManagerEvent event) {
+    pi_terminalapp* app = context;
     bool consumed = false;
 
     if(event.type == SceneManagerEventTypeCustom) {
-        if(event.event == Pi_TerminalEventStartConsole) {
+        if(event.event == pi_terminalEventStartConsole) {
             // Point to custom string to send
             app->selected_tx_string = app->text_input_store;
-            scene_manager_next_scene(app->scene_manager, Pi_TerminalAppViewConsoleOutput);
+            scene_manager_next_scene(app->scene_manager, pi_terminalappViewConsoleOutput);
             consumed = true;
         }
     }
@@ -59,8 +55,8 @@ bool Pi_Terminal_scene_text_input_on_event(void* context, SceneManagerEvent even
     return consumed;
 }
 
-void Pi_Terminal_scene_text_input_on_exit(void* context) {
-    Pi_TerminalApp* app = context;
+void pi_terminal_scene_text_input_on_exit(void* context) {
+    pi_terminalapp* app = context;
 
     uart_text_input_reset(app->text_input);
 }

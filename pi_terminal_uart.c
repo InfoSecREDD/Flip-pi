@@ -1,8 +1,8 @@
-#include "Pi_Terminal_app_i.h"
-#include "Pi_Terminal_uart.h"
+#include "pi_terminal_app_i.h"
+#include "pi_terminal_uart.h"
 
-struct Pi_TerminalUart {
-    Pi_TerminalApp* app;
+struct pi_terminalUart {
+    pi_terminalApp* app;
     FuriThread* rx_thread;
     FuriStreamBuffer* rx_stream;
     uint8_t rx_buf[RX_BUF_SIZE + 1];
@@ -15,8 +15,8 @@ typedef enum {
     WorkerEvtRxDone = (1 << 1),
 } WorkerEvtFlags;
 
-void Pi_Terminal_uart_set_handle_rx_data_cb(
-    Pi_TerminalUart* uart,
+void pi_terminal_uart_set_handle_rx_data_cb(
+    pi_terminalUart* uart,
     void (*handle_rx_data_cb)(uint8_t* buf, size_t len, void* context)) {
     furi_assert(uart);
     uart->handle_rx_data_cb = handle_rx_data_cb;
@@ -24,11 +24,11 @@ void Pi_Terminal_uart_set_handle_rx_data_cb(
 
 #define WORKER_ALL_RX_EVENTS (WorkerEvtStop | WorkerEvtRxDone)
 
-void Pi_Terminal_uart_on_irq_cb(
+void pi_terminal_uart_on_irq_cb(
     FuriHalSerialHandle* handle,
     FuriHalSerialRxEvent event,
     void* context) {
-    Pi_TerminalUart* uart = (Pi_TerminalUart*)context;
+    pi_terminalUart* uart = (pi_terminalUart*)context;
 
     if(event == FuriHalSerialRxEventData) {
         uint8_t data = furi_hal_serial_async_rx(handle);
@@ -38,7 +38,7 @@ void Pi_Terminal_uart_on_irq_cb(
 }
 
 static int32_t uart_worker(void* context) {
-    Pi_TerminalUart* uart = (void*)context;
+    pi_terminalUart* uart = (void*)context;
 
     while(1) {
         uint32_t events =
@@ -58,17 +58,17 @@ static int32_t uart_worker(void* context) {
     return 0;
 }
 
-void Pi_Terminal_uart_tx(Pi_TerminalUart* uart, uint8_t* data, size_t len) {
+void pi_terminal_uart_tx(pi_terminalUart* uart, uint8_t* data, size_t len) {
     furi_hal_serial_tx(uart->serial_handle, data, len);
 }
 
-Pi_TerminalUart* Pi_Terminal_uart_init(Pi_TerminalApp* app) {
-    Pi_TerminalUart* uart = malloc(sizeof(Pi_TerminalUart));
+pi_terminalUart* pi_terminal_uart_init(pi_terminalApp* app) {
+    pi_terminalUart* uart = malloc(sizeof(pi_terminalUart));
     uart->app = app;
     // Init all rx stream and thread early to avoid crashes
     uart->rx_stream = furi_stream_buffer_alloc(RX_BUF_SIZE, 1);
     uart->rx_thread = furi_thread_alloc();
-    furi_thread_set_name(uart->rx_thread, "Pi_TerminalUartRxThread");
+    furi_thread_set_name(uart->rx_thread, "pi_terminalUartRxThread");
     furi_thread_set_stack_size(uart->rx_thread, 1024);
     furi_thread_set_context(uart->rx_thread, uart);
     furi_thread_set_callback(uart->rx_thread, uart_worker);
@@ -83,12 +83,12 @@ Pi_TerminalUart* Pi_Terminal_uart_init(Pi_TerminalApp* app) {
     furi_check(uart->serial_handle);
     furi_hal_serial_init(uart->serial_handle, app->BAUDRATE);
 
-    furi_hal_serial_async_rx_start(uart->serial_handle, Pi_Terminal_uart_on_irq_cb, uart, false);
+    furi_hal_serial_async_rx_start(uart->serial_handle, pi_terminal_uart_on_irq_cb, uart, false);
 
     return uart;
 }
 
-void Pi_Terminal_uart_free(Pi_TerminalUart* uart) {
+void pi_terminal_uart_free(pi_terminalUart* uart) {
     furi_assert(uart);
 
     furi_thread_flags_set(furi_thread_get_id(uart->rx_thread), WorkerEvtStop);
@@ -101,9 +101,8 @@ void Pi_Terminal_uart_free(Pi_TerminalUart* uart) {
     free(uart);
 }
 
-void Pi_Terminal_uart_send_ctrl_c(Pi_TerminalUart* uart) {
+void pi_terminal_uart_send_ctrl_sequence(pi_terminalUart* uart, uint8_t sequence) {
     if(uart && uart->serial_handle) {
-        uint8_t ctrlC = 0x03; // Ctrl+C ASCII code
-        Pi_Terminal_uart_tx(uart, &ctrlC, 1);
+        pi_terminal_uart_tx(uart, &sequence, 1);
     }
 }

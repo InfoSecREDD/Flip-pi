@@ -1,8 +1,8 @@
-#include "../Pi_Terminal_app_i.h"
+#include "../pi_terminal_app_i.h"
 
-void Pi_Terminal_console_output_handle_rx_data_cb(uint8_t* buf, size_t len, void* context) {
+void pi_terminal_console_output_handle_rx_data_cb(uint8_t* buf, size_t len, void* context) {
     furi_assert(context);
-    Pi_TerminalApp* app = context;
+    pi_terminalApp* app = context;
     FuriString* new_str = furi_string_alloc();
 
     if(app->hex_mode) {
@@ -19,7 +19,7 @@ void Pi_Terminal_console_output_handle_rx_data_cb(uint8_t* buf, size_t len, void
     // If text box store gets too big, then truncate it
     app->text_box_store_strlen += furi_string_size(new_str);
     ;
-    while(app->text_box_store_strlen >= Pi_Terminal_TEXT_BOX_STORE_SIZE - 1) {
+    while(app->text_box_store_strlen >= pi_terminal_TEXT_BOX_STORE_SIZE - 1) {
         furi_string_right(app->text_box_store, app->text_box_store_strlen / 2);
         app->text_box_store_strlen = furi_string_size(app->text_box_store) + len;
     }
@@ -28,7 +28,7 @@ void Pi_Terminal_console_output_handle_rx_data_cb(uint8_t* buf, size_t len, void
     furi_string_free(new_str);
 
     view_dispatcher_send_custom_event(
-        app->view_dispatcher, Pi_TerminalEventRefreshConsoleOutput);
+        app->view_dispatcher, pi_terminalEventRefreshConsoleOutput);
 }
 
 static uint8_t hex_char_to_byte(const char c) {
@@ -44,8 +44,8 @@ static uint8_t hex_char_to_byte(const char c) {
     return 0;
 }
 
-void Pi_Terminal_scene_console_output_on_enter(void* context) {
-    Pi_TerminalApp* app = context;
+void pi_terminal_scene_console_output_on_enter(void* context) {
+    pi_terminalApp* app = context;
 
     TextBox* text_box = app->text_box;
     text_box_reset(app->text_box);
@@ -65,10 +65,10 @@ void Pi_Terminal_scene_console_output_on_enter(void* context) {
     }
 
     if(need_reinit) {
-        Pi_Terminal_uart_free(app->uart);
+        pi_terminal_uart_free(app->uart);
         app->BAUDRATE = app->NEW_BAUDRATE;
         app->uart_ch = app->new_uart_ch;
-        app->uart = Pi_Terminal_uart_init(app);
+        app->uart = pi_terminal_uart_init(app);
     }
 
     if(app->is_command) {
@@ -79,12 +79,12 @@ void Pi_Terminal_scene_console_output_on_enter(void* context) {
     // Set starting text - for "View Log", this will just be what was already in the text box store
     text_box_set_text(app->text_box, furi_string_get_cstr(app->text_box_store));
 
-    scene_manager_set_scene_state(app->scene_manager, Pi_TerminalSceneConsoleOutput, 0);
-    view_dispatcher_switch_to_view(app->view_dispatcher, Pi_TerminalAppViewConsoleOutput);
+    scene_manager_set_scene_state(app->scene_manager, pi_terminalSceneConsoleOutput, 0);
+    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalAppViewConsoleOutput);
 
     // Register callback to receive data
-    Pi_Terminal_uart_set_handle_rx_data_cb(
-        app->uart, Pi_Terminal_console_output_handle_rx_data_cb); // setup callback for rx thread
+    pi_terminal_uart_set_handle_rx_data_cb(
+        app->uart, pi_terminal_console_output_handle_rx_data_cb); // setup callback for rx thread
 
     if(app->hex_mode) {
         // Send binary packet
@@ -96,7 +96,7 @@ void Pi_Terminal_scene_console_output_on_enter(void* context) {
                 byte |= (hex_char_to_byte(*str) << ((1 - digit_num) * 4));
 
                 if(++digit_num == 2) {
-                    Pi_Terminal_uart_tx(app->uart, &byte, 1);
+                    pi_terminal_uart_tx(app->uart, &byte, 1);
                     digit_num = 0;
                     byte = 0;
                 }
@@ -104,31 +104,31 @@ void Pi_Terminal_scene_console_output_on_enter(void* context) {
             }
 
             if(digit_num) {
-                Pi_Terminal_uart_tx(app->uart, &byte, 1);
+                pi_terminal_uart_tx(app->uart, &byte, 1);
             }
         }
     } else {
         // Send command with CR+LF or newline '\n'
         if(app->is_command && app->selected_tx_string) {
             if(app->TERMINAL_MODE == 1) {
-                Pi_Terminal_uart_tx(
+                pi_terminal_uart_tx(
                     app->uart,
                     (uint8_t*)(app->selected_tx_string),
                     strlen(app->selected_tx_string));
-                Pi_Terminal_uart_tx(app->uart, (uint8_t*)("\r\n"), 2);
+                pi_terminal_uart_tx(app->uart, (uint8_t*)("\r\n"), 2);
             } else {
-                Pi_Terminal_uart_tx(
+                pi_terminal_uart_tx(
                     app->uart,
                     (uint8_t*)(app->selected_tx_string),
                     strlen(app->selected_tx_string));
-                Pi_Terminal_uart_tx(app->uart, (uint8_t*)("\n"), 1);
+                pi_terminal_uart_tx(app->uart, (uint8_t*)("\n"), 1);
             }
         }
     }
 }
 
-bool Pi_Terminal_scene_console_output_on_event(void* context, SceneManagerEvent event) {
-    Pi_TerminalApp* app = context;
+bool pi_terminal_scene_console_output_on_event(void* context, SceneManagerEvent event) {
+    pi_terminalApp* app = context;
 
     bool consumed = false;
 
@@ -142,9 +142,9 @@ bool Pi_Terminal_scene_console_output_on_event(void* context, SceneManagerEvent 
     return consumed;
 }
 
-void Pi_Terminal_scene_console_output_on_exit(void* context) {
-    Pi_TerminalApp* app = context;
+void pi_terminal_scene_console_output_on_exit(void* context) {
+    pi_terminalApp* app = context;
 
     // Unregister rx callback
-    Pi_Terminal_uart_set_handle_rx_data_cb(app->uart, NULL);
+    pi_terminal_uart_set_handle_rx_data_cb(app->uart, NULL);
 }

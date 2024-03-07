@@ -1,4 +1,4 @@
-#include "../Pi_Terminal_app_i.h"
+#include "../pi_terminal_app_i.h"
 
 #define MAX_OPTIONS 25
 
@@ -6,10 +6,10 @@ typedef struct {
     const char* item_string;
     int num_options_menu;
     const char* options_menu[MAX_OPTIONS];
-} Pi_Terminal_Setup_Item;
+} pi_terminal_Setup_Item;
 
-// SETUP_MENU_ITEMS defined in Pi_Terminal_app_i.h - if you add an entry here, increment it!
-static const Pi_Terminal_Setup_Item items[SETUP_MENU_ITEMS] = {
+// SETUP_MENU_ITEMS defined in pi_terminal_app_i.h - if you add an entry here, increment it!
+static const pi_terminal_Setup_Item items[SETUP_MENU_ITEMS] = {
     {"UART Pins", 2, {"13,14", "15,16"}},
     {"Baudrate", 25, {"75",     "110",    "150",    "300",   "600",    "1200",   "1800",
                       "2400",   "4800",   "7200",   "9600",  "14400",  "19200",  "31250",
@@ -18,25 +18,25 @@ static const Pi_Terminal_Setup_Item items[SETUP_MENU_ITEMS] = {
     {"HEX mode", 2, {"OFF", "ON"}},
 };
 
-static void Pi_Terminal_scene_setup_var_list_enter_callback(void* context, uint32_t index) {
+static void pi_terminal_scene_setup_var_list_enter_callback(void* context, uint32_t index) {
     furi_assert(context);
-    Pi_TerminalApp* app = context;
+    pi_terminalapp* app = context;
 
     furi_assert(index < SETUP_MENU_ITEMS);
-    const Pi_Terminal_Setup_Item* item = &items[index];
+    const pi_terminal_Setup_Item* item = &items[index];
 
     const int selected_option_index = app->setup_selected_option_index[index];
     furi_assert(selected_option_index < item->num_options_menu);
     app->setup_selected_menu_index = index;
 }
 
-static void Pi_Terminal_scene_setup_var_list_change_callback(VariableItem* item) {
+static void pi_terminal_scene_setup_var_list_change_callback(VariableItem* item) {
     furi_assert(item);
 
-    Pi_TerminalApp* app = variable_item_get_context(item);
+    pi_terminalapp* app = variable_item_get_context(item);
     furi_assert(app);
 
-    const Pi_Terminal_Setup_Item* menu_item = &items[app->setup_selected_menu_index];
+    const pi_terminal_Setup_Item* menu_item = &items[app->setup_selected_menu_index];
     uint8_t item_index = variable_item_get_current_value_index(item);
     furi_assert(item_index < menu_item->num_options_menu);
     variable_item_set_current_value_text(item, menu_item->options_menu[item_index]);
@@ -66,12 +66,12 @@ static void Pi_Terminal_scene_setup_var_list_change_callback(VariableItem* item)
     }
 }
 
-void Pi_Terminal_scene_setup_on_enter(void* context) {
-    Pi_TerminalApp* app = context;
+void pi_terminal_scene_setup_on_enter(void* context) {
+    pi_terminalapp* app = context;
     VariableItemList* var_item_list = app->setup_var_item_list;
 
     variable_item_list_set_enter_callback(
-        var_item_list, Pi_Terminal_scene_setup_var_list_enter_callback, app);
+        var_item_list, pi_terminal_scene_setup_var_list_enter_callback, app);
 
     VariableItem* item;
     for(int i = 0; i < SETUP_MENU_ITEMS; ++i) {
@@ -79,7 +79,7 @@ void Pi_Terminal_scene_setup_on_enter(void* context) {
             var_item_list,
             items[i].item_string,
             items[i].num_options_menu,
-            Pi_Terminal_scene_setup_var_list_change_callback,
+            pi_terminal_scene_setup_var_list_change_callback,
             app);
         variable_item_set_current_value_index(item, app->setup_selected_option_index[i]);
         variable_item_set_current_value_text(
@@ -87,14 +87,14 @@ void Pi_Terminal_scene_setup_on_enter(void* context) {
     }
 
     variable_item_list_set_selected_item(
-        var_item_list, scene_manager_get_scene_state(app->scene_manager, Pi_TerminalSceneSetup));
+        var_item_list, scene_manager_get_scene_state(app->scene_manager, pi_terminalSceneSetup));
 
-    view_dispatcher_switch_to_view(app->view_dispatcher, Pi_TerminalAppViewSetup);
+    view_dispatcher_switch_to_view(app->view_dispatcher, pi_terminalappViewSetup);
 }
 
-bool Pi_Terminal_scene_setup_on_event(void* context, SceneManagerEvent event) {
+bool pi_terminal_scene_setup_on_event(void* context, SceneManagerEvent event) {
     UNUSED(context);
-    Pi_TerminalApp* app = context;
+    pi_terminalapp* app = context;
     bool consumed = false;
 
     if(event.type == SceneManagerEventTypeCustom) {
@@ -108,7 +108,7 @@ bool Pi_Terminal_scene_setup_on_event(void* context, SceneManagerEvent event) {
     return consumed;
 }
 
-void Pi_Terminal_scene_setup_on_exit(void* context) {
-    Pi_TerminalApp* app = context;
+void pi_terminal_scene_setup_on_exit(void* context) {
+    pi_terminalapp* app = context;
     variable_item_list_reset(app->setup_var_item_list);
 }

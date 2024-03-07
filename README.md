@@ -1,4 +1,4 @@
-# PI Terminal for Flipper Zero 
+# Pi Terminal for Flipper Zero 
 [Flipper Zero](https://flipperzero.one/) app to control various devices via UART interface.
 
 ## Capabilities
@@ -19,7 +19,7 @@
 Info: If possible, do not power your devices from 3V3 (pin 9) Flipper Zero. It does not support hot plugging.
 
 ## Keyboard
-Pi_Terminal uses its own special keyboard for work, which has all the symbols necessary for working in the console.
+Pi Terminal uses its own special keyboard for work, which has all the symbols necessary for working in the console.
 
 To accommodate more characters on a small display, some characters are called up by holding.
 
@@ -39,7 +39,7 @@ or
 
 [Unleashed Firmware](https://github.com/DarkFlippers/unleashed-firmware)
 
-Copy the contents of the repository to the applications_user/Pi_Terminal folder Flipper Zero firmware and build app with the command ./fbt fap_Pi_Terminal.
+Copy the contents of the repository to the applications_user/pi_terminal folder Flipper Zero firmware and build app with the command ./fbt fap_pi_terminal.
 
 Or use the tool [uFBT](https://github.com/flipperdevices/flipperzero-ufbt) for building applications for Flipper Zero.
 
